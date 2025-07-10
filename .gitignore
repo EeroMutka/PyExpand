@@ -1,0 +1,17 @@
+.build/
+.vs2022/
+.vscode/
+.vs/
+VSPyExpand/bin/
+VSPyExpand/obj/
+plugin/
+*.exp
+*.exe
+*.pdb
+*.idb
+*.obj
+*.ilk
+*.sln
+*.vcxproj
+*vcxproj.filters
+*vcxproj.user
