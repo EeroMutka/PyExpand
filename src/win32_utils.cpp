@@ -1,4 +1,4 @@
-#include "basic_data_structures/ds.h"
+#include "ds/ds.h"
 
 #include "win32_utils.h"
 #include <Windows.h>

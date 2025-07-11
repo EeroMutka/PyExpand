@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
-#include "basic_data_structures/ds.h"
+#include "ds/ds.h"
 
 #include "win32_utils.h"
 

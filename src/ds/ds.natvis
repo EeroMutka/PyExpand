@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 This file contains instructions for the Visual Studio debugger for how to display
-certain Data structures in a nicer way in the debugger watch window.
+some data structures in a nicer way in the debugger watch window.
 
 Expressions in the debugger - Format Specifiers in C++
 https://msdn.microsoft.com/en-us/library/75w45ekt.aspx?f=255&MSPPError=-2147217396
@@ -23,25 +23,38 @@ https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-na
 	</Type>
 	
 	<Type Name="DS_Map&lt;*&gt;&lt;*&gt;">
-		<DisplayString>{{Data={(void*)Data}, Size={Size}}}</DisplayString>
+		<DisplayString>{{Data={(void*)Data}, NumSlots={NumSlots}, NumElems={NumElems}}}</DisplayString>
 		<Expand>
 			<ArrayItems>
-			  <Size>capacity</Size>
+			  <Size>NumSlots</Size>
 			  <ValuePointer>Data</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>
+	<Type Name="DS_MapSlot&lt;*&gt;&lt;*&gt;">
+		<DisplayString>{Key} -> {Value}</DisplayString>
+	</Type>
 
 	<Type Name="DS_Set&lt;*&gt;">
-		<DisplayString>{{Data={(void*)Data}, Size={Size}}}</DisplayString>
+		<DisplayString>{{Data={(void*)Data}, NumSlots={NumSlots}, NumElems={NumElems}}}</DisplayString>
 		<Expand>
 			<ArrayItems>
-				<Size>capacity</Size>
+				<Size>NumSlots</Size>
 				<ValuePointer>Data</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>
 
+	<Type Name="DS_Uint32x2">
+		<DisplayString>{Values[0],x}-{Values[1],x}</DisplayString>
+	</Type>
+	<Type Name="DS_Uint32x3">
+		<DisplayString>{Values[0],x}-{Values[1],x}-{Values[2],x}</DisplayString>
+	</Type>
+	<Type Name="DS_Uint64x2">
+		<DisplayString>{Values[0],x}-{Values[1],x}</DisplayString>
+	</Type>
+	
 	<Type Name="DS_Slice&lt;*&gt;">
 		<DisplayString>{{Data={(void*)Data}, Size={Size}}}</DisplayString>
 		<Expand>
@@ -53,20 +66,20 @@ https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-na
 	</Type>
 
 	<Type Name="DS_StringView">
-		<DisplayString>{Data,[Size]s}</DisplayString>
+		<DisplayString>{Data,[size]s}</DisplayString>
 		<Expand>
 			<ArrayItems>
-				<Size>Size</Size>
+				<Size>size</Size>
 				<ValuePointer>Data</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>
 	
 	<Type Name="DS_String">
-		<DisplayString>{Data,[Size]s}</DisplayString>
+		<DisplayString>{Data,[size]s}</DisplayString>
 		<Expand>
 			<ArrayItems>
-				<Size>Size</Size>
+				<Size>size</Size>
 				<ValuePointer>Data</ValuePointer>
 			</ArrayItems>
 		</Expand>

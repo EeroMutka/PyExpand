@@ -1,5 +1,10 @@
 #include "ds.h"
 
+// `p` must be a power of 2.
+// `x` is allowed to be negative as well.
+#define DS_AlignUpPow2(x, p) (((x) + (p) - 1) & ~((p) - 1)) // e.g. (x=30, p=16) -> 32
+#define DS_AlignDownPow2(x, p) ((x) & ~((p) - 1)) // e.g. (x=30, p=16) -> 16
+
 #define DS_IsUtf8FirstByte(c) (((c) & 0xC0) != 0x80) /* is c the start of a utf8 sequence? */
 
 static const uint32_t DS_UTF8_OFFSETS[6] = {
@@ -93,6 +98,36 @@ intptr_t DS_StringView::RFind(DS_StringView other, intptr_t start_from)
 				result = ptr - Data;
 				break;
 			}
+		}
+	}
+	return result;
+}
+
+intptr_t DS_StringView::FindChar(char other, intptr_t start_from)
+{
+	DS_ASSERT(start_from >= 0 && start_from <= Size);
+	intptr_t result = Size;
+	char* ptr = Data + start_from;
+	char* end = Data + Size;
+	for (; ptr < end; ptr++)
+	{
+		if (*ptr == other) {
+			result = ptr - Data;
+			break;
+		}
+	}
+	return result;
+}
+
+intptr_t DS_StringView::RFindChar(char other, intptr_t start_from)
+{
+	intptr_t result = Size;
+	char* ptr = Data + (start_from >= Size ? Size : start_from) - 1;
+	for (; ptr >= Data; ptr--)
+	{
+		if (*ptr == other) {
+			result = ptr - Data;
+			break;
 		}
 	}
 	return result;
@@ -274,72 +309,3 @@ void DS_Arena::SetMark(DS_ArenaMark mark)
 		Mark = mark;
 	}
 }
-
-uint32_t DS_MurmurHash3(const void* key, intptr_t len, uint32_t seed)
-{
-	const uint8_t * data = (const uint8_t*)key;
-	const intptr_t nblocks = len / 4;
-
-	uint32_t h1 = seed;
-
-	const uint32_t c1 = 0xcc9e2d51;
-	const uint32_t c2 = 0x1b873593;
-
-	//----------
-	// body
-
-	const uint32_t * blocks = (const uint32_t *)(data + nblocks*4);
-
-	for(intptr_t i = -nblocks; i; i++)
-	{
-		uint32_t k1 = DS_getblock32(blocks,i);
-
-		k1 *= c1;
-		k1 = DS_ROTL32(k1,15);
-		k1 *= c2;
-
-		h1 ^= k1;
-		h1 = DS_ROTL32(h1,13); 
-		h1 = h1*5+0xe6546b64;
-	}
-
-	//----------
-	// tail
-
-	const uint8_t * tail = (const uint8_t*)(data + nblocks*4);
-
-	uint32_t k1 = 0;
-
-	switch(len & 3)
-	{
-	case 3: k1 ^= tail[2] << 16;
-	case 2: k1 ^= tail[1] << 8;
-	case 1: k1 ^= tail[0];
-		k1 *= c1; k1 = DS_ROTL32(k1,15); k1 *= c2; h1 ^= k1;
-	};
-
-	//----------
-	// finalization
-
-	h1 ^= (uint32_t)len;
-
-	h1 = DS_fmix32(h1);
-
-	return h1;
-}
-
-//void DS_Internal_BucketArrayMoveToNextBucket(void* array, size_t elem_size, size_t N)
-//{
-//	DS_BucketArray<char, 1>* arr = (DS_BucketArray<char, 1>*)array;
-//
-//	if (arr->buckets_count == arr->buckets_capacity)
-//	{
-//		uint32_t new_cap = arr->buckets_capacity == 0 ? 8 : arr->buckets_capacity * 2;
-//		*(void**)&arr->buckets = arr->allocator->MemRealloc(arr->buckets, arr->buckets_capacity * sizeof(void*), new_cap * sizeof(void*));
-//		arr->buckets_capacity = new_cap;
-//	}
-//	
-//	arr->buckets[arr->buckets_count].elems = (char*)arr->allocator->MemAlloc(elem_size * N);
-//	arr->buckets_count += 1;
-//	arr->last_bucket_end = 0;
-//}
